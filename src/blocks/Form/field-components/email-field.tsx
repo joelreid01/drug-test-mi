@@ -26,6 +26,7 @@ export default function EmailField({ label, colSpan, required }: EmailFieldUIPro
         </Label>
         <Input
           id={field.name}
+          name={field.name}
           type="email"
           value={field.state.value ?? ''}
           onBlur={() => field.handleBlur()}
