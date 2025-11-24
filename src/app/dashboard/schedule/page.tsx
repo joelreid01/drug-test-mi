@@ -1,5 +1,5 @@
 import { getAuthenticatedClient } from '@/utilities/auth/getAuthenticatedClient'
-import { CalEmbed } from '@/components/cal-embed'
+import { CalInline } from '@/components/cal-inline'
 import type { Client } from '@/payload-types'
 
 // Force dynamic rendering for fresh data on every request
@@ -73,7 +73,9 @@ export default async function SchedulePage() {
         </div>
       </div>
 
-      <CalEmbed calUsername="midrugtest" config={calConfig} />
+      <div className="px-4 lg:px-6">
+        <CalInline calUsername="midrugtest" config={calConfig} />
+      </div>
     </div>
   )
 }
