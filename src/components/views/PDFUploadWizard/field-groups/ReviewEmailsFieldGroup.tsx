@@ -65,10 +65,10 @@ export const ReviewEmailsFieldGroup = withFieldGroup({
 
   props: {
     title: 'Review Emails',
-    description: 'Review and customize the emails that will be sent for this drug test',
+    description: '',
   },
 
-  render: function Render({ group, title, description }) {
+  render: function Render({ group, title, description = '' }) {
     const [isLoading, setIsLoading] = useState(true)
     const [previewData, setPreviewData] = useState<EmailPreviewData | null>(null)
     const [showClientPreview, setShowClientPreview] = useState(false)
@@ -77,7 +77,8 @@ export const ReviewEmailsFieldGroup = withFieldGroup({
 
     // Get data from previous steps
     const formValues = useStore(group.form.store, (state: any) => state.values)
-    const clientData = formValues.clientData
+    // Client can come from either clientData (instant test) or verifyData.clientData (lab screen)
+    const clientData = formValues.clientData || formValues.verifyData?.clientData
     const verifyData = formValues.verifyData
 
     useEffect(() => {
