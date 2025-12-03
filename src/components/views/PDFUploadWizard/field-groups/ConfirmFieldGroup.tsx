@@ -20,6 +20,7 @@ import { computeTestResultPreview } from '../actions'
 import { z } from 'zod'
 import type { PdfUploadFormType } from '../schemas/pdfUploadSchemas'
 import { format } from 'date-fns'
+import { generateTestFilename } from '../utils/generateFilename'
 
 // Export the schema for reuse in step validation
 export const confirmFieldSchema = z.object({
@@ -56,45 +57,15 @@ export const ConfirmFieldGroup = withFieldGroup({
     // Client can come from either clientData (instant test) or verifyData.clientData (lab screen)
     const client = (formValues as any).clientData || verifyData?.clientData
 
-    // Generate proper filename based on client initials and collection date
-    const generateFilename = () => {
-      try {
-        if (!client || !verifyData?.collectionDate) {
-          return uploadData?.file?.name || 'No file'
-        }
-
-        const firstInitial = client.firstName?.charAt(0)?.toUpperCase() || ''
-        const middleInitial = client.middleInitial?.charAt(0)?.toUpperCase() || ''
-        const lastInitial = client.lastName?.charAt(0)?.toUpperCase() || ''
-
-        const initials = middleInitial
-          ? `${firstInitial}${middleInitial}${lastInitial}`
-          : `${firstInitial}${lastInitial}`
-
-        // Fallback to original filename if we don't have enough data
-        if (!initials || initials.length < 2) {
-          return uploadData?.file?.name || 'No file'
-        }
-
-        const date = format(new Date(verifyData.collectionDate), 'MM-dd-yy')
-        const testTypePrefix =
-          verifyData.testType === '11-panel-lab'
-            ? 'Lab'
-            : verifyData.testType === '17-panel-sos-lab'
-              ? 'Lab'
-              : verifyData.testType === 'etg-lab'
-                ? 'Lab'
-                : 'Instant'
-
-        return `${initials}_${testTypePrefix}_${date}.pdf`
-      } catch (error) {
-        console.error('Error generating filename:', error)
-        // Fallback to original filename on any error
-        return uploadData?.file?.name || 'No file'
-      }
-    }
-
-    const displayFilename = generateFilename()
+    // Generate new filename and keep original
+    const originalFilename = uploadData?.file?.name || 'No file'
+    const newFilename =
+      generateTestFilename({
+        client,
+        collectionDate: verifyData?.collectionDate,
+        testType: verifyData?.testType,
+        isConfirmation: false,
+      }) || originalFilename
 
     useEffect(() => {
       async function fetchPreview() {
@@ -404,9 +375,16 @@ export const ConfirmFieldGroup = withFieldGroup({
                 <FileText className="h-4 w-4" />
                 PDF Document
               </div>
-              <div className="pl-6">
-                <p className="font-medium">{displayFilename}</p>
-                <p className="text-muted-foreground text-sm">
+              <div className="space-y-2 pl-6">
+                <div>
+                  <p className="text-xs text-muted-foreground">Original filename:</p>
+                  <p className="text-sm font-medium">{originalFilename}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Will be renamed to:</p>
+                  <p className="text-sm font-semibold">{newFilename}</p>
+                </div>
+                <p className="text-muted-foreground text-xs">
                   {uploadData?.file
                     ? `${(uploadData.file.size / 1024).toFixed(2)} KB`
                     : 'No file uploaded'}
