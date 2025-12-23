@@ -3,9 +3,10 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/utilities/cn'
 import { CheckCircle2, Mail } from 'lucide-react'
+import { FormValues } from '../../workflows/TestWorkflow/validators'
 
 interface ClientCardProps {
-  client: any
+  client: FormValues['clientData']
   onClick?: () => void
   selected?: boolean
 }
@@ -37,17 +38,16 @@ export const ClientDisplayCard = ({ client, onClick, selected }: ClientCardProps
               {client.firstName} {client.middleInitial ? `${client.middleInitial}. ` : ''}
               {client.lastName}
             </p>
-            {client.matchType === 'exact' && <Badge className="bg-green-600">Exact</Badge>}
+            {/* {client.matchType === 'exact' && <Badge className="bg-green-600">Exact</Badge>}
             {client.score > 0 && client.matchType !== 'exact' && (
               <Badge variant="secondary">{Math.round(client.score * 100)}% Match</Badge>
-            )}
+            )} */}
           </div>
           <div className="text-muted-foreground mt-1 flex items-center gap-2 text-sm">
             <Mail className="h-3.5 w-3.5" />
             <span className="truncate">{client.email}</span>
           </div>
         </div>
-        {selected && <CheckCircle2 className="text-success-foreground h-5 w-5 shrink-0" />}
       </div>
     </CardContent>
   </Card>
