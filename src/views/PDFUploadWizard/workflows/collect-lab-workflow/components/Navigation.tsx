@@ -18,14 +18,11 @@ export const CollectLabNavigation = withForm({
     // Read step from URL (single source of truth)
     const [currentStepRaw, setCurrentStep] = useQueryState(
       'step',
-      parseAsStringLiteral(steps as readonly string[]).withDefault('client')
+      parseAsStringLiteral(steps as readonly string[]).withDefault('client'),
     )
-    const currentStep = currentStepRaw as typeof steps[number]
+    const currentStep = currentStepRaw as (typeof steps)[number]
 
-    const [isSubmitting, errors] = useStore(form.store, (state) => [
-      state.isSubmitting,
-      state.errors,
-    ])
+    const [isSubmitting, errors] = useStore(form.store, (state) => [state.isSubmitting, state.errors])
 
     const currentIndex = steps.indexOf(currentStep)
     const isFirstStep = currentIndex === 0
