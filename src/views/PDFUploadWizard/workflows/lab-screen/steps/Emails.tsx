@@ -19,7 +19,11 @@ export const EmailsStep = withForm({
 
     // Use lab screen email preview hook
     // Note: medications and breathalyzer info are automatically fetched from the matched test
-    const { data: previewData, isLoading, error } = useLabScreenEmailPreview({
+    const {
+      data: previewData,
+      isLoading,
+      error,
+    } = useLabScreenEmailPreview({
       testId: formValues?.matchCollection?.testId,
       testType: formValues?.labScreenData?.testType,
       detectedSubstances: (formValues?.labScreenData?.detectedSubstances || []) as SubstanceValue[],
@@ -29,17 +33,18 @@ export const EmailsStep = withForm({
     // Initialize form fields when preview data loads
     useEffect(() => {
       if (previewData) {
-        // Initialize client email if available
-        if (previewData.clientEmail) {
-          form.setFieldValue('emails.clientEmailEnabled', false) // Lab screens default to false
+        // Initialize client email if available and not yet set
+        if (previewData.clientEmail && formValues.emails.clientRecipients.length === 0) {
+          form.setFieldValue('emails.clientEmailEnabled', true)
           form.setFieldValue('emails.clientRecipients', [previewData.clientEmail])
         }
-        // Initialize referral emails
-        form.setFieldValue('emails.referralEmailEnabled', true)
-        form.setFieldValue('emails.referralRecipients', previewData.referralEmails)
+        // Initialize referral emails if not yet set
+        if (previewData.referralEmails.length > 0 && formValues.emails.referralRecipients.length === 0) {
+          form.setFieldValue('emails.referralEmailEnabled', true)
+          form.setFieldValue('emails.referralRecipients', previewData.referralEmails)
+        }
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [previewData])
+    }, [previewData, formValues.emails.clientRecipients.length, formValues.emails.referralRecipients.length, form])
 
     return (
       <EmailsFieldGroup
@@ -50,11 +55,10 @@ export const EmailsStep = withForm({
         error={error?.message || null}
         showPreview={showReferralPreview}
         setShowPreview={setShowReferralPreview}
-        showClientEmail={false} // Lab tests don't show client email section
+        showClientEmail={true}
         title="Review Screening Notification Emails"
         description="Configure email recipients for lab screening results"
       />
     )
   },
 })
-

@@ -38,7 +38,7 @@ const defaultValues: FormValues = {
     confirmationSubstances: [],
   },
   emails: {
-    clientEmailEnabled: false, // Default false for lab tests (results not immediate)
+    clientEmailEnabled: true,
     clientRecipients: [],
     referralEmailEnabled: true,
     referralRecipients: [],
