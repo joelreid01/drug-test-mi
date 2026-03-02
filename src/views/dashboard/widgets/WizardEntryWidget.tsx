@@ -14,16 +14,16 @@ export default function WizardEntryWidget({ req }: WidgetServerProps) {
   return (
     <ShadcnWrapper className="pb-0">
       <Card>
-        <CardHeader className="space-y-2">
-          <CardTitle className="text-2xl">Drug Test Wizard</CardTitle>
-          <CardDescription className="text-base">
+        <CardHeader className="space-y-1 pb-3">
+          <CardTitle>Drug Test Wizard</CardTitle>
+          <CardDescription>
             Start the admin workflow for registration, instant tests, and lab processing.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Link
             href="/admin/drug-test-upload"
-            className={cn(buttonVariants({ size: 'xl' }), 'w-full justify-center md:w-auto')}
+            className={cn(buttonVariants(), 'w-full justify-center md:w-auto')}
           >
             Open Drug Test Wizard
           </Link>
